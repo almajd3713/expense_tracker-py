@@ -1,7 +1,7 @@
 # main.py
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
-from ExpenseUI import (ExpenseUI)  # Import the UI from the new file
+from app.ExpenseUI import (ExpenseUI)  # Import the UI from the new file
 
 class ExpenseApp(QMainWindow):
     def __init__(self):
