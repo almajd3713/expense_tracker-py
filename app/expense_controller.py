@@ -18,6 +18,9 @@ class ExpenseApp(QMainWindow):
         # Connect the button to the add_expense method
         self.ui.input_panel.add_button.clicked.connect(self.add_expense)
 
+        # Connect the row_deleted signal to the delete_expense method
+        self.ui.expense_table.row_deleted.connect(self.delete_expense)
+
         # Add default data
         self.add_default_data()
 
@@ -58,6 +61,10 @@ class ExpenseApp(QMainWindow):
                 total += float(item.text())
         return total
 
+    def delete_expense(self, row):
+        """Delete an expense from the table and update the total."""
+        self.ui.expense_table.removeRow(row)
+        self.update_total()
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
