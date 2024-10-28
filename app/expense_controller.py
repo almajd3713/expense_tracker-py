@@ -1,6 +1,6 @@
 # expense_controller.py
 import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox
 from app.ui.expense_ui import ExpenseUI
 
 class ExpenseApp(QMainWindow):
@@ -34,11 +34,29 @@ class ExpenseApp(QMainWindow):
         expense = self.ui.input_panel.expense_input.text().strip()
         price = self.ui.input_panel.price_input.text().strip()
 
-        if self.is_valid_expense(expense, price):
-            self.add_expense_to_table(expense, price)
-            self.clear_input_fields()
-            self.update_total()
+        if not expense or not price:
+            self.show_error_message("Both fields are required.")
+            return
+        try:
+            price = float(price)
+        except ValueError:
+            self.show_error_message("Price must be a valid number.")
+            return
 
+        if price < 0:
+            self.show_error_message("Price must be a positive number.")
+            return
+
+        self.add_expense_to_table(expense, price)
+        self.clear_input_fields()
+        self.update_total()
+
+    def show_error_message(self, message):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Critical)
+        msg_box.setText(message)
+        msg_box.setWindowTitle("Input Error")
+        msg_box.exec_()
     def update_total(self):
         total = self.calculate_total()
         self.ui.total_panel.update_total(total)
