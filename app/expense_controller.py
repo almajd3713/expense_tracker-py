@@ -38,6 +38,18 @@ class ExpenseApp(QMainWindow):
         self.update_total()
 
     def add_expense(self):
+        """
+        Adds an expense to the expense tracker.
+        This method retrieves the expense name and price from the input fields,
+        validates them, and then adds the expense to the table if the inputs are valid.
+        It also updates the total expense and clears the input fields.
+        Raises:
+            ValueError: If the price input is not a valid number.
+        Shows error messages for:
+            - Empty expense or price fields.
+            - Invalid price input (non-numeric).
+            - Negative price values.
+        """
         expense = self.ui.input_panel.expense_input.text().strip()
         price = self.ui.input_panel.price_input.text().strip()
 
@@ -87,16 +99,11 @@ class ExpenseApp(QMainWindow):
         return total
 
     def delete_expense(self, row):
-        """Delete an expense from the table and update the total."""
+        """
+        Delete an expense from the expense table and update the total expense amount.
+
+        Args:
+            row (int): The row index of the expense to be deleted.
+        """
         self.ui.expense_table.removeRow(row)
         self.update_total()
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    # Load the QSS stylesheet
-    with open("app/ui/style.qss", "r") as f:
-        app.setStyleSheet(f.read())
-
-    window = ExpenseApp()
-    window.show()
-    sys.exit(app.exec_())
