@@ -34,3 +34,10 @@ class InputPanel(QWidget):
         self.layout.addWidget(self.price_label)
         self.layout.addWidget(self.price_input)
         self.layout.addWidget(self.add_button)
+        # Connect key press events
+        self.expense_input.returnPressed.connect(self.add_button.click)
+        self.price_input.returnPressed.connect(self.price_input_return)
+
+    def price_input_return(self):
+        self.add_button.click()
+        self.expense_input.setFocus()

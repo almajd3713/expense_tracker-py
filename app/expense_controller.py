@@ -10,7 +10,7 @@ class ExpenseApp(QMainWindow):
         # Set up the main window
         self.setWindowTitle("Expense Tracker")
         self.setGeometry(100, 100, 600, 400)
-
+        self.center()
         # Create the UI and set it as the central widget
         self.ui = ExpenseUI()
         self.setCentralWidget(self.ui)
@@ -23,6 +23,13 @@ class ExpenseApp(QMainWindow):
 
         # Add default data
         self.add_default_data()
+
+    def center(self):
+        """Center the window on the screen."""
+        frame = self.frameGeometry()
+        center_point = QApplication.desktop().availableGeometry().center()
+        frame.moveCenter(center_point)
+        self.move(frame.topLeft())
 
     def add_default_data(self):
         initial_data = [("Groceries", 50.0), ("Fuel", 70.0), ("Gym", 30.0)]
