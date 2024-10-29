@@ -7,6 +7,7 @@ from app.ui.expense_ui import ExpenseUI
 db_url = "./app/db/expense.db"
 
 class ExpenseApp(QMainWindow):
+    data = list()
     def __init__(self):
         super().__init__()
         # Set up the database
@@ -37,10 +38,9 @@ class ExpenseApp(QMainWindow):
         self.move(frame.topLeft())
 
     def load_existing_data(self):
-        data = self.db.get_all_expenses()
-        print(data)
-        for expense, price in data:
-            self.add_expense_to_table(expens, price)
+        self.data = self.db.get_all_expenses()
+        for _, expense, price in self.data:
+            self.add_expense_to_table(expense, price)
         self.update_total()
 
     def add_expense(self):
@@ -71,7 +71,8 @@ class ExpenseApp(QMainWindow):
         if price < 0:
             self.show_error_message("Price must be a positive number.")
             return
-        self.db.add_expense(expense, price)
+        row = self.db.add_expense(expense, price)
+        self.data.append(row)
         self.add_expense_to_table(expense, price)
         self.clear_input_fields()
         self.update_total()
@@ -111,6 +112,11 @@ class ExpenseApp(QMainWindow):
         Args:
             row (int): The row index of the expense to be deleted.
         """
-        print(row)
+        # print(row)
+        row_tuple = self.data[row]
+        row_tuple_id = row_tuple[0]
+        
+        self.data.remove(row_tuple)
+        self.db.drop_expense(row_tuple_id)
         self.ui.expense_table.removeRow(row)
         self.update_total()
