@@ -14,9 +14,10 @@ class DB:
         self.cursor.execute(
             "INSERT INTO expenses(name, value) VALUES(?, ?)", (expense, value)
         )
-        row = self.cursor.execute(
+        self.cursor.execute(
             "SELECT * FROM expenses WHERE id=(SELECT max(id) FROM expenses)"
         )
+        row = self.cursor.fetchone()
         self.conn.commit()
         return row
 
