@@ -24,6 +24,7 @@ class ExpenseTable(QTableWidget):
         self.insertRow(row_position)
         self.setItem(row_position, 0, QTableWidgetItem(expense))
         self.setItem(row_position, 1, QTableWidgetItem(price))
+        self.setData(row_position,)
 
         # Add delete button
         delete_button = QPushButton("Delete")
