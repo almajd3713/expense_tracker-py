@@ -1,11 +1,17 @@
 # expense_controller.py
 import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox
+from app.db import DB
 from app.ui.expense_ui import ExpenseUI
 
+db_url = "./app/db/expense.db"
+
 class ExpenseApp(QMainWindow):
+    data = list()
     def __init__(self):
         super().__init__()
+        # Set up the database
+        self.db = DB(db_url)
 
         # Set up the main window
         self.setWindowTitle("Expense Tracker")
@@ -22,7 +28,7 @@ class ExpenseApp(QMainWindow):
         self.ui.expense_table.row_deleted.connect(self.delete_expense)
 
         # Add default data
-        self.add_default_data()
+        self.load_existing_data()
 
     def center(self):
         """Center the window on the screen."""
@@ -31,9 +37,9 @@ class ExpenseApp(QMainWindow):
         frame.moveCenter(center_point)
         self.move(frame.topLeft())
 
-    def add_default_data(self):
-        initial_data = [("Groceries", 50.0), ("Fuel", 70.0), ("Gym", 30.0)]
-        for expense, price in initial_data:
+    def load_existing_data(self):
+        self.data = self.db.get_all_expenses()
+        for _, expense, price in self.data:
             self.add_expense_to_table(expense, price)
         self.update_total()
 
@@ -65,7 +71,8 @@ class ExpenseApp(QMainWindow):
         if price < 0:
             self.show_error_message("Price must be a positive number.")
             return
-
+        row = self.db.add_expense(expense, price)
+        self.data.append(row)
         self.add_expense_to_table(expense, price)
         self.clear_input_fields()
         self.update_total()
@@ -105,5 +112,11 @@ class ExpenseApp(QMainWindow):
         Args:
             row (int): The row index of the expense to be deleted.
         """
+        # print(row)
+        row_tuple = self.data[row]
+        row_tuple_id = row_tuple[0]
+        
+        self.data.remove(row_tuple)
+        self.db.drop_expense(row_tuple_id)
         self.ui.expense_table.removeRow(row)
         self.update_total()
