@@ -39,8 +39,8 @@ class ExpenseApp(QMainWindow):
 
     def load_existing_data(self):
         self.data = self.db.get_all_expenses()
-        for _, expense, price in self.data:
-            self.add_expense_to_table(expense, price)
+        for _, expense, price, dateCreated, dateUpdated in self.data:
+            self.add_expense_to_table(expense, price, dateCreated)
         self.update_total()
 
     def add_expense(self):
@@ -71,9 +71,9 @@ class ExpenseApp(QMainWindow):
         if price < 0:
             self.show_error_message("Price must be a positive number.")
             return
-        row = self.db.add_expense(expense, price)
+        row = self.db.add_expense(expense, price, "") # REMOVE
         self.data.append(row)
-        self.add_expense_to_table(expense, price)
+        self.add_expense_to_table(expense, price, row[3]) # REMOVE
         self.clear_input_fields()
         self.update_total()
 
@@ -87,8 +87,8 @@ class ExpenseApp(QMainWindow):
         total = self.calculate_total()
         self.ui.total_panel.update_total(total)
 
-    def add_expense_to_table(self, expense, price):
-        self.ui.expense_table.add_expense(expense, str(price))
+    def add_expense_to_table(self, expense, price, dateCreated):
+        self.ui.expense_table.add_expense(expense, str(price), dateCreated)
 
     def clear_input_fields(self):
         self.ui.input_panel.expense_input.clear()

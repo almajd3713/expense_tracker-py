@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 class DB:
 
@@ -10,9 +11,10 @@ class DB:
         self.conn = sqlite3.connect(self.url)
         self.cursor = self.conn.cursor()
 
-    def add_expense(self, expense: str, value: float):
+    def add_expense(self, expense: str, value: float, dateCreated: datetime):
+        dateUpdated = datetime.now().strftime("%Y-%m-%d")
         self.cursor.execute(
-            "INSERT INTO expenses(name, value) VALUES(?, ?)", (expense, value)
+            "INSERT INTO expenses(name, value, dateCreated, dateUpdated) VALUES(?, ?, ?, ?)", (expense, value, dateUpdated, dateUpdated)
         )
         self.cursor.execute(
             "SELECT * FROM expenses WHERE id=(SELECT max(id) FROM expenses)"
