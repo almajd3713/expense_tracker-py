@@ -1,6 +1,6 @@
-# ui/expense_ui.py
 from PyQt5.QtWidgets import (
-    QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSpacerItem, QSizePolicy, QLineEdit, QPushButton
+    QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSpacerItem,
+    QSizePolicy, QLineEdit, QPushButton, QPushButton
 )
 from app.ui.input_panel import InputPanel
 from app.ui.expense_table import ExpenseTable
@@ -43,3 +43,16 @@ class ExpenseUI(QWidget):
         # Total panel at the bottom
         self.total_panel = TotalPanel()
         self.layout.addWidget(self.total_panel)
+
+        # Export button at the very bottom
+        self.export_button = QPushButton("Export to PDF")
+        self.export_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        # Horizontal layout for the button (in case you want more widgets later)
+        button_layout = QHBoxLayout()
+        button_layout.addSpacerItem(QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        button_layout.addWidget(self.export_button)
+        button_layout.addSpacerItem(QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
+
+        # Add the button layout to the main layout
+        self.layout.addLayout(button_layout)

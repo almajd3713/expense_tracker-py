@@ -1,13 +1,14 @@
-# expense_controller.py
 import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox
 from app.db import DB
 from app.ui.expense_ui import ExpenseUI
+from app.ui.expense_report import ExpenseReport  # Import the new class
 
 db_url = "./app/db/expense.db"
 
 class ExpenseApp(QMainWindow):
     data = list()
+
     def __init__(self):
         super().__init__()
         # Set up the database
@@ -17,9 +18,13 @@ class ExpenseApp(QMainWindow):
         self.setWindowTitle("Expense Tracker")
         self.setGeometry(100, 100, 600, 400)
         self.center()
+
         # Create the UI and set it as the central widget
         self.ui = ExpenseUI()
         self.setCentralWidget(self.ui)
+
+        # Initialize ExpenseReport with the table widget
+        self.expense_report = ExpenseReport(self.ui.expense_table)
 
         # Connect the button to the add_expense method
         self.ui.input_panel.add_button.clicked.connect(self.add_expense)
@@ -29,6 +34,9 @@ class ExpenseApp(QMainWindow):
         self.ui.rows_per_page_input.textChanged.connect(self.update_rows_per_page)
         self.ui.prev_button.clicked.connect(self.ui.expense_table.prev_page)
         self.ui.next_button.clicked.connect(self.ui.expense_table.next_page)
+        # Connect the export button to the export_to_pdf method
+        self.ui.export_button.clicked.connect(self.expense_report.export_to_pdf)
+
         # Add existing data
         self.load_existing_data()
 
@@ -48,23 +56,12 @@ class ExpenseApp(QMainWindow):
 
     def load_existing_data(self):
         self.data = self.db.get_all_expenses()
-        for _, expense, price in self.data:
-            self.add_expense_to_table(expense, price)
+        for _, expense, price, dateCreated, dateUpdated in self.data:
+            self.add_expense_to_table(expense, price, dateCreated)
         self.update_total()
 
     def add_expense(self):
-        """
-        Adds an expense to the expense tracker.
-        This method retrieves the expense name and price from the input fields,
-        validates them, and then adds the expense to the table if the inputs are valid.
-        It also updates the total expense and clears the input fields.
-        Raises:
-            ValueError: If the price input is not a valid number.
-        Shows error messages for:
-            - Empty expense or price fields.
-            - Invalid price input (non-numeric).
-            - Negative price values.
-        """
+        """Adds an expense to the tracker with validation."""
         expense = self.ui.input_panel.expense_input.text().strip()
         price = self.ui.input_panel.price_input.text().strip()
 
@@ -80,9 +77,9 @@ class ExpenseApp(QMainWindow):
         if price < 0:
             self.show_error_message("Price must be a positive number.")
             return
-        row = self.db.add_expense(expense, price)
+        row = self.db.add_expense(expense, price, "") # REMOVE
         self.data.append(row)
-        self.add_expense_to_table(expense, price)
+        self.add_expense_to_table(expense, price, row[3]) # REMOVE
         self.clear_input_fields()
         self.update_total()
 
@@ -92,19 +89,17 @@ class ExpenseApp(QMainWindow):
         msg_box.setText(message)
         msg_box.setWindowTitle("Input Error")
         msg_box.exec_()
+
     def update_total(self):
         total = self.calculate_total()
         self.ui.total_panel.update_total(total)
 
-    def add_expense_to_table(self, expense, price):
-        self.ui.expense_table.add_expense(expense, str(price))
+    def add_expense_to_table(self, expense, price, dateCreated):
+        self.ui.expense_table.add_expense(expense, str(price), dateCreated)
 
     def clear_input_fields(self):
         self.ui.input_panel.expense_input.clear()
         self.ui.input_panel.price_input.clear()
-
-    def is_valid_expense(self, expense, price):
-        return expense and price
 
     def calculate_total(self):
         total = 0.0
@@ -115,15 +110,10 @@ class ExpenseApp(QMainWindow):
         return total
 
     def delete_expense(self, row):
-        """
-        Delete an expense from the expense table and update the total expense amount.
-
-        Args:
-            row (int): The row index of the expense to be deleted.
-        """
+        """Delete an expense from the table and database."""
         row_tuple = self.data[row]
         row_tuple_id = row_tuple[0]
-        
+
         self.data.remove(row_tuple)
         self.db.drop_expense(row_tuple_id)
         self.ui.expense_table.removeRow(row)
