@@ -4,3 +4,4 @@ __pycache__/
 .vscode/
 **/**.db-journal
 **/**.db
+expense_report.pdf
