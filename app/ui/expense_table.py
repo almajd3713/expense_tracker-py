@@ -7,11 +7,11 @@ class ExpenseTable(QTableWidget):
     def __init__(self):
         super().__init__()
 
-        # Set up table with 3 columns (Expense, Price, Delete Button)
-        self.setColumnCount(3)
-        self.setHorizontalHeaderLabels(["Expense", "Price", ""])
+        # Set up table with 3 columns (Expense, Price, Date Created, Delete Button)
+        self.setColumnCount(4)
+        self.setHorizontalHeaderLabels(["Expense", "Price", "Date Created", ""])
 
-    def add_expense(self, expense, price):
+    def add_expense(self, expense, price, dateCreated):
         """
         Add a new expense to the table.
         Args:
@@ -24,12 +24,13 @@ class ExpenseTable(QTableWidget):
         self.insertRow(row_position)
         self.setItem(row_position, 0, QTableWidgetItem(expense))
         self.setItem(row_position, 1, QTableWidgetItem(price))
+        self.setItem(row_position, 2, QTableWidgetItem(dateCreated))
 
         # Add delete button
         delete_button = QPushButton("Delete")
         delete_button.setObjectName("deleteButton")
         delete_button.clicked.connect(lambda: self.delete_expense(delete_button))
-        self.setCellWidget(row_position, 2, delete_button)
+        self.setCellWidget(row_position, 3, delete_button)
         # print(f"Added expense delete button row {row_position}") this was for debugging purposes
 
     def delete_expense(self, button):
