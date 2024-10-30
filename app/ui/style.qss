@@ -26,6 +26,16 @@ QPushButton:hover {
     background-color: #4cae4c;
 }
 
+QPushButton#deleteButton {
+    background-color: #FF0000;  
+    color: white;
+    border-radius: 5px;     
+    padding: 8px;
+}
+QPushButton#deleteButton:hover {
+    background-color: #8B0000;
+}
+
 QLabel {
     font-weight: bold;
     color: #333;

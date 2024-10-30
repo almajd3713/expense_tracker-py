@@ -27,6 +27,7 @@ class ExpenseTable(QTableWidget):
 
         # Add delete button
         delete_button = QPushButton("Delete")
+        delete_button.setObjectName("deleteButton")
         delete_button.clicked.connect(lambda: self.delete_expense(delete_button))
         self.setCellWidget(row_position, 2, delete_button)
         # print(f"Added expense delete button row {row_position}") this was for debugging purposes
