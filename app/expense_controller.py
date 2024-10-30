@@ -26,9 +26,18 @@ class ExpenseApp(QMainWindow):
 
         # Connect the row_deleted signal to the delete_expense method
         self.ui.expense_table.row_deleted.connect(self.delete_expense)
-
-        # Add default data
+        self.ui.rows_per_page_input.textChanged.connect(self.update_rows_per_page)
+        self.ui.prev_button.clicked.connect(self.ui.expense_table.prev_page)
+        self.ui.next_button.clicked.connect(self.ui.expense_table.next_page)
+        # Add existing data
         self.load_existing_data()
+
+    def update_rows_per_page(self):
+        try:
+            rows = int(self.ui.rows_per_page_input.text())
+        except ValueError:
+            rows = 10  # Default value
+        self.ui.expense_table.set_rows_per_page(rows)
 
     def center(self):
         """Center the window on the screen."""
@@ -112,7 +121,6 @@ class ExpenseApp(QMainWindow):
         Args:
             row (int): The row index of the expense to be deleted.
         """
-        # print(row)
         row_tuple = self.data[row]
         row_tuple_id = row_tuple[0]
         

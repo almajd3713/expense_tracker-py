@@ -1,6 +1,6 @@
 # ui/expense_ui.py
 from PyQt5.QtWidgets import (
-    QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSpacerItem, QSizePolicy
+    QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSpacerItem, QSizePolicy, QLineEdit, QPushButton
 )
 from app.ui.input_panel import InputPanel
 from app.ui.expense_table import ExpenseTable
@@ -25,6 +25,20 @@ class ExpenseUI(QWidget):
         # Expense table
         self.expense_table = ExpenseTable()
         self.layout.addWidget(self.expense_table)
+
+        # Pagination controls
+        self.pagination_layout = QHBoxLayout()
+        self.rows_per_page_input = QLineEdit()
+        self.rows_per_page_input.setPlaceholderText("Rows per page (default 10)")
+        self.pagination_layout.addWidget(self.rows_per_page_input)
+
+        self.prev_button = QPushButton("Previous")
+        self.pagination_layout.addWidget(self.prev_button)
+
+        self.next_button = QPushButton("Next")
+        self.pagination_layout.addWidget(self.next_button)
+
+        self.layout.addLayout(self.pagination_layout)
 
         # Total panel at the bottom
         self.total_panel = TotalPanel()
