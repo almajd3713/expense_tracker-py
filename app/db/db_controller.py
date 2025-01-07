@@ -22,6 +22,14 @@ class DB:
         row = self.cursor.fetchone()
         self.conn.commit()
         return row
+    
+    def get_expenses_filtered(self, date: str):
+        data = []
+        month = date.split('-')[1]
+        for row in self.cursor.execute('SELECT * FROM expenses WHERE dateCreated LIKE %-?-%', (month, )):
+            data.append(row)
+        return data
+
 
     def get_all_expenses(self):
         data = []

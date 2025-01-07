@@ -33,6 +33,9 @@ class ExpenseTable(QTableWidget):
         self.setCellWidget(row_position, 3, delete_button)
         # print(f"Added expense delete button row {row_position}") this was for debugging purposes
 
+    def delete_table(self):
+        self.setRowCount(0)
+
     def delete_expense(self, button):
         """
         Deletes an expense row from the table.
